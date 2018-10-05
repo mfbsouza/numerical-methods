@@ -1,4 +1,5 @@
 from sympy import *
+import matplotlib.pyplot as plt
 
 # definindo as 'variaveis'
 t, y = symbols("t, y")
@@ -18,12 +19,17 @@ def Euler(y0, t0, h, n, expr):
     for i in range(n+1):
         # inserting the current Tn in the axis list
         tn = t0 + i*h
-        axis_x.append(tn)
+        axis_x.append(round(tn, 3))
         # calculating Yn+1 using Euler (Yn+1 = Yn + h*Fn)
         if i != n:
             Yn1 = axis_y[i] + h*(expr.subs([(y, axis_y[i]), (t, tn)]))
-            axis_y.append(Yn1)
-    print(' x | y')
+            axis_y.append(round(Yn1, 7))
+    plt.xlabel('t')
+    plt.ylabel('y')
+    plt.plot(axis_x, axis_y, 'go')
+    plt.plot(axis_x, axis_y, 'k:', color='blue')
+    plt.show()
+    print('  x  | y')
     for j in range(n+1):
         print(axis_x[j], axis_y[j])
 
