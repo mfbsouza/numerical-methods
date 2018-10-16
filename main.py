@@ -91,10 +91,10 @@ def rungekutta(y0, t0, h, n, expr):
         if i != n:
             yn = axis_y[i]
             # defining K's
-            k1 = fn(expr, tn, yn)
-            k2 = fn(tn+h/2, yn + (h/2)*k1)
-            k3 = fn(tn+h/2, yn + (h/2)*k2)
-            k4 = expr.subs(  [ (t, tn+h),   (y, yn + h*k3)      ]  )
+            k1 = expr.subs( [ (t, tn),     (y, yn)             ] )
+            k2 = expr.subs( [ (t, tn+h/2), (y, yn + (h/2)*k1)  ] )
+            k3 = expr.subs( [ (t, tn+h/2), (y, yn + (h/2)*k2)  ] )
+            k4 = expr.subs( [ (t, tn+h),   (y, yn + h*k3)      ] )
             # finding Yn+1 by runge-kutta: Yn1 = Yn + (h/6)*(k1 + 2k2 + 2k3 + k4)
             Yn1 = yn + (h/6)*(k1 + 2*k2 + 2*k3 + k4)
             # Saving values into the arrays
@@ -105,6 +105,43 @@ def rungekutta(y0, t0, h, n, expr):
     for j in range(n+1):
         print(axis_x[j], axis_y[j])
     ShowGraphic(axis_x, axis_y, "Runge-Kutta Grau 4")
+
+def AdamBashforth(input_y, t0, h, n, expr, order):
+    # initializing lists
+    axis_x = []
+    axis_y = [input_y[-1]]
+    if order == 2:
+        for i in range(n+1):
+            tn = t0 + i*h
+            if != n:
+                tn_1 = tn - h
+                yn = axis_y[i]
+                yn_1 = input_y[0]
+                # Defining Fn's
+                Fn_1 = (1/2)*expr.subs( [ (t, tn_1), (y, yn_1) ] )
+                Fn   = (3/2)*expr.subs( [ (t, tn),   (y, yn)   ] )
+                # Finding Yn+1 by Adam-Bashforth: Yn+1 = h*(Fn - Fn_1)
+                Yn1 = h*(Fn - Fn_1)
+                # Saving values into the arrays
+                axis_y.append(round(Yn1, 7))
+            axis_x.append(round(tn, 3))
+    elif order == 3:
+        for i in range(n+1):
+            tn = t0 + i*h
+            if != n:
+                tn_1 = tn - h
+                tn_2 = tn_1-h
+                yn = axis_y[i]
+                yn_1 = input_y[0]
+                # Defining Fn's
+                Fn_1 = (1/2)*expr.subs( [ (t, tn_1), (y, yn_1) ] )
+                Fn   = (3/2)*expr.subs( [ (t, tn),   (y, yn)   ] )
+                # Finding Yn+1 by Adam-Bashforth: Yn+1 = h*(Fn - Fn_1)
+                Yn1 = h*(Fn - Fn_1)
+                # Saving values into the arrays
+                axis_y.append(round(Yn1, 7))
+            axis_x.append(round(tn, 3))
+            
 
 # Executa o main do programa
 if __name__ == "__main__":
