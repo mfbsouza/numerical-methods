@@ -28,9 +28,8 @@ def main():
             ys = []
             for i in range(1, order+1):
                 ys.append(float(words[i]))
-            for bia in ys:
-                print(bia)
-            AdamBashforth(ys, float(words[order+1]), float(words[order+2]), int(words[order+3]), sympify(words[order+4]), order, file)
+            t0 = float(words[order+1]) + float(words[order+2])*(order-1)
+            AdamBashforth(ys, t0, float(words[order+2]), int(words[order+3]), sympify(words[order+4]), order, file)
         elif words[0] == 'adam_bashforth_by_euler':
             order = int(words[-1])
             file.write("Metodo de Adam Bashforth por Euler ( ordem = " + str(order) + " )\n")
@@ -66,7 +65,8 @@ def main():
             ys = []
             for i in range(1, order):
                 ys.append(float(words[i]))
-            AdamMoulton(ys, float(words[order]), float(words[order+1]), int(words[order+2]), sympify(words[order+3]), order, file)
+            t0 = float(words[order]) + float(words[order+1])*(order - 2)
+            AdamMoulton(ys, t0, float(words[order+1]), int(words[order+2]), sympify(words[order+3]), order, file)
         elif words[0] == 'adam_multon_by_euler':
             order = int(words[-1])
             file.write("Metodo de Adam Moulton por Euler ( ordem = " + str(order) + " )\n")
@@ -102,7 +102,8 @@ def main():
             ys = []
             for i in range(1, order):
                 ys.append(float(words[i]))
-            fdi(ys, float(words[order]), float(words[order+1]), int(words[order+2]), sympify(words[order+3]), order, file)
+            t0 = float(words[order]) + float(words[order+1])*(order - 2)
+            fdi(ys, t0, float(words[order+1]), int(words[order+2]), sympify(words[order+3]), order, file)
         elif words[0] == 'formula_inversa_by_euler':
             order = int(words[-1])
             file.write("Metodo de Formula Inversa de Difereneciacao por Euler ( ordem = " + str(order) + " )\n")
