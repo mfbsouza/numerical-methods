@@ -5,54 +5,61 @@ import matplotlib.pyplot as plt
 t, y = symbols("t, y")
 
 def main():
-    # lendo os paramentros como string
-    data = input()
-    words = data.split()
-    if words[0] == 'euler':
-        Euler(float(words[1]), float(words[2]), float(words[3]), int(words[4]), sympify(words[5]), 1)
-    elif words[0] == 'euler_inverso':
-        EulerInverso(float(words[1]), float(words[2]), float(words[3]), int(words[4]), sympify(words[5]),1)
-    elif words[0] == 'euler_aprimorado':
-        EulerAprimorado(float(words[1]), float(words[2]), float(words[3]), int(words[4]), sympify(words[5]),1)
-    elif words[0] == 'runge_kutta':
-        rungekutta(float(words[1]), float(words[2]), float(words[3]), int(words[4]), sympify(words[5]),1)
-    elif words[0] == 'adam_bashforth':
-        order = int(words[-1])
-        ys = []
-        for i in range(1, order+1):
-            ys.append(float(words[i]))
-        AdamBashforth(ys, float(words[order+1]), float(words[order+2]), int(words[order+3]), sympify(words[order+4]), order)
-    elif words[0] == 'adam_bashforth_by_euler':
-        order = int(words[-1])
-        t0 = float(words[2]) + float(words[3])*(order-1)
-        list_y = Euler(float(words[1]), float(words[2]), float(words[3]), (order-1), sympify(words[5]), 0)
-        AdamBashforth(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order)
-    elif words[0] == 'adam_bashforth_by_euler_inverso':
-        order = int(words[-1])
-        t0 = float(words[2]) + float(words[3])*(order-1)
-        list_y = EulerInverso(float(words[1]), float(words[2]), float(words[3]), (order-1), sympify(words[5]), 0)
-        AdamBashforth(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order)
-    elif words[0] == 'adam_bashforth_by_euler_aprimorado':
-        order = int(words[-1])
-        t0 = float(words[2]) + float(words[3])*(order-1)
-        list_y = EulerAprimorado(float(words[1]), float(words[2]), float(words[3]), (order-1), sympify(words[5]), 0)
-        AdamBashforth(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order)
-    elif words[0] == 'adam_bashforth_by_runge_kutta':
-        order = int(words[-1])
-        t0 = float(words[2]) + float(words[3])*(order-1)
-        list_y = rungekutta(float(words[1]), float(words[2]), float(words[3]), (order-1), sympify(words[5]), 0)
-        AdamBashforth(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order)
-    elif words[0] == 'adam_moulton':
-        order = int(words[-1])
-        ys = []
-        for i in range(1, order):
-            ys.append(float(words[i]))
-        AdamMoulton(ys, float(words[order]), float(words[order+1]), int(words[order+2]), sympify(words[order+3]), order)
-    elif words[0] == 'adam_moulton_by_euler':
-        order = int(words[-1])
-        t0 = float(words[2]) + float(words[3])*(order - 2)
-        list_y = Euler(float(words[1]), float(words[2]), float(words[3]), (order - 2), sympify(words[5]), 0)
-        AdamMoulton(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order)
+    # Lendo o arquivo de entrada
+    filepath = 'entrada.txt'
+    read = open(filepath, "r")
+    file = open("saida.txt", "w")
+    lines = read.readlines()
+
+    for line in lines:
+        words = line.split()
+        if words[0] == 'euler':
+            Euler(float(words[1]), float(words[2]), float(words[3]), int(words[4]), sympify(words[5]), 1, file)
+        elif words[0] == 'euler_inverso':
+            EulerInverso(float(words[1]), float(words[2]), float(words[3]), int(words[4]), sympify(words[5]),1, file)
+        elif words[0] == 'euler_aprimorado':
+            EulerAprimorado(float(words[1]), float(words[2]), float(words[3]), int(words[4]), sympify(words[5]),1, file)
+        elif words[0] == 'runge_kutta':
+            rungekutta(float(words[1]), float(words[2]), float(words[3]), int(words[4]), sympify(words[5]),1, file)
+        elif words[0] == 'adam_bashforth':
+            order = int(words[-1])
+            ys = []
+            for i in range(1, order+1):
+                ys.append(float(words[i]))
+            AdamBashforth(ys, float(words[order+1]), float(words[order+2]), int(words[order+3]), sympify(words[order+4]), order, file)
+        elif words[0] == 'adam_bashforth_by_euler':
+            order = int(words[-1])
+            t0 = float(words[2]) + float(words[3])*(order-1)
+            list_y = Euler(float(words[1]), float(words[2]), float(words[3]), (order-1), sympify(words[5]), 0, file)
+            AdamBashforth(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order, file)
+        elif words[0] == 'adam_bashforth_by_euler_inverso':
+            order = int(words[-1])
+            t0 = float(words[2]) + float(words[3])*(order-1)
+            list_y = EulerInverso(float(words[1]), float(words[2]), float(words[3]), (order-1), sympify(words[5]), 0, file)
+            AdamBashforth(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order, file)
+        elif words[0] == 'adam_bashforth_by_euler_aprimorado':
+            order = int(words[-1])
+            t0 = float(words[2]) + float(words[3])*(order-1)
+            list_y = EulerAprimorado(float(words[1]), float(words[2]), float(words[3]), (order-1), sympify(words[5]), 0, file)
+            AdamBashforth(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order, file)
+        elif words[0] == 'adam_bashforth_by_runge_kutta':
+            order = int(words[-1])
+            t0 = float(words[2]) + float(words[3])*(order-1)
+            list_y = rungekutta(float(words[1]), float(words[2]), float(words[3]), (order-1), sympify(words[5]), 0, file)
+            AdamBashforth(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order, file)
+        elif words[0] == 'adam_moulton':
+            order = int(words[-1])
+            ys = []
+            for i in range(1, order):
+                ys.append(float(words[i]))
+            AdamMoulton(ys, float(words[order]), float(words[order+1]), int(words[order+2]), sympify(words[order+3]), order, file)
+        elif words[0] == 'adam_moulton_by_euler':
+            order = int(words[-1])
+            t0 = float(words[2]) + float(words[3])*(order - 2)
+            list_y = Euler(float(words[1]), float(words[2]), float(words[3]), (order - 2), sympify(words[5]), 0, file)
+            AdamMoulton(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order, file)
+    read.close()
+    file.close()
 
 def ShowGraphic(x, y, title):
     plt.title(title)
@@ -62,7 +69,7 @@ def ShowGraphic(x, y, title):
     plt.plot(x, y, 'k:', color='blue')
     plt.show()
 
-def Euler(y0, t0, h, n, expr, show):
+def Euler(y0, t0, h, n, expr, show, file):
     # initializing list
     axis_x = []
     axis_y = [y0]
@@ -78,14 +85,21 @@ def Euler(y0, t0, h, n, expr, show):
             axis_y.append(Yn1)
 
     if show == 1:
-        print(' x | y')
-        for j in range(n+1):
-            print(axis_x[j], axis_y[j])
+        file.write("Metodo de Euler\n")
+        print("Metodo de Euler")
+        file.write("y( " + str(axis_x[0]) + " ) = " + str(axis_y[0]) + "\n")
+        file.write("h = " + str(h) + "\n")
+        print(0, axis_y[0])
+        for j in range(1, n+1):
+            file.write(str(j) + " " + str(axis_y[j]) + "\n")
+            print(j, axis_y[j])
+        file.write("\n")
+        print("\n")
         ShowGraphic(axis_x, axis_y, "Euler Simples")
     elif show == 0:
         return axis_y
 
-def EulerInverso(y0, t0, h, n, expr, show):
+def EulerInverso(y0, t0, h, n, expr, show, file):
     #initializing lists
     axis_x = []
     axis_y = [y0]
@@ -98,13 +112,21 @@ def EulerInverso(y0, t0, h, n, expr, show):
             Yn1 = solve(axis_y[i]+h*(expr.subs(t, tn1)) - y, implicit=True)
             axis_y.append(Yn1[0])
     if show == 1:
-        for j in range(n+1):
-            print(axis_x[j], axis_y[j])
+        file.write("Metodo de Euler Inverso\n")
+        print("Metodo de Euler Inverso")
+        file.write("y( " + str(axis_x[0]) + " ) = " + str(axis_y[0]) + "\n")
+        file.write("h = " + str(h) + "\n")
+        print(0, axis_y[0])
+        for j in range(1, n+1):
+            file.write(str(j) + " " + str(axis_y[j]) + "\n")
+            print(j, axis_y[j])
+        file.write("\n")
+        print("\n")
         ShowGraphic(axis_x, axis_y, "Euler Inverso")
     elif show == 0:
         return axis_y
 
-def EulerAprimorado(y0, t0, h, n, expr, show):
+def EulerAprimorado(y0, t0, h, n, expr, show, file):
     #initializing lists
     axis_x = []
     axis_y = [y0]
@@ -117,13 +139,21 @@ def EulerAprimorado(y0, t0, h, n, expr, show):
             Yn1 = solve(axis_y[i] + (h/2)*(expr.subs(t, tn1) + expr.subs([(y, axis_y[i]), (t, tn)])) - y, implicit=True)
             axis_y.append(Yn1[0])
     if show == 1:
-        for j in range(n+1):
-            print(axis_x[j], axis_y[j])
+        file.write("Metodo de Euler Aprimorado\n")
+        print("Metodo de Euler Aprimorado")
+        file.write("y( " + str(axis_x[0]) + " ) = " + str(axis_y[0]) + "\n")
+        file.write("h = " + str(h) + "\n")
+        print(0, axis_y[0])
+        for j in range(1, n+1):
+            file.write(str(j) + " " + str(axis_y[j]) + "\n")
+            print(j, axis_y[j])
+        file.write("\n")
+        print("\n")
         ShowGraphic(axis_x, axis_y, "Euler Aprimorado")
     elif show == 0:
         return axis_y
 
-def rungekutta(y0, t0, h, n, expr, show):
+def rungekutta(y0, t0, h, n, expr, show, file):
     #initializing lists
     axis_x = []
     axis_y = [y0]
@@ -141,16 +171,22 @@ def rungekutta(y0, t0, h, n, expr, show):
             # Saving values into the arrays
             axis_y.append(Yn1)
         axis_x.append(tn)
-
     if show == 1:
-        # printing the values
-        for j in range(n+1):
-            print(axis_x[j], axis_y[j])
-        ShowGraphic(axis_x, axis_y, "Runge-Kutta Grau 4")
+        file.write("Metodo de Runge-Kutta de Grau 4\n")
+        print("Metodo de Runge-Kutta de Grau 4")
+        file.write("y( " + str(axis_x[0]) + " ) = " + str(axis_y[0]) + "\n")
+        file.write("h = " + str(h) + "\n")
+        print(0, axis_y[0])
+        for j in range(1, n+1):
+            file.write(str(j) + " " + str(axis_y[j]) + "\n")
+            print(j, axis_y[j])
+        file.write("\n")
+        print("\n")
+        ShowGraphic(axis_x, axis_y, "Rugge-Kutta de Grau 4")
     elif show == 0:
         return axis_y
 
-def AdamBashforth(input_y, t0, h, n, expr, order):
+def AdamBashforth(input_y, t0, h, n, expr, order, file):
     # initializing lists
     axis_x = []
     axis_y = []
@@ -324,13 +360,20 @@ def AdamBashforth(input_y, t0, h, n, expr, order):
             # Saving values into the arrays
             axis_y.append(Yn1)
             axis_x.append((tn+h))
-
-    # Priting values
-    for j in range(n+1):
-        print(axis_x[j], axis_y[j])
+    # Priting the values
+    file.write("Metodo de Euler Inverso\n")
+    print("Metodo de Euler Inverso")
+    file.write("y( " + str(axis_x[0]) + " ) = " + str(axis_y[0]) + "\n")
+    file.write("h = " + str(h) + "\n")
+    print(0, axis_y[0])
+    for j in range(1, n+1):
+        file.write(str(j) + " " + str(axis_y[j]) + "\n")
+        print(j, axis_y[j])
+    file.write("\n")
+    print("\n")
     ShowGraphic(axis_x, axis_y, "Adam-Bashforth de ordem: " + str(order))
 
-def AdamMoulton(input_y, t0, h, n, expr, order):
+def AdamMoulton(input_y, t0, h, n, expr, order, file):
     # initializing lists
     axis_x = []
     axis_y = []
@@ -497,10 +540,17 @@ def AdamMoulton(input_y, t0, h, n, expr, order):
             # Saving values into the arrays
             axis_y.append(Yn1[0])
             axis_x.append(tn1)
-
-    # Printing values
-    for j in range(n+1):
-        print(axis_x[j], axis_y[j])
+    # Priting Values
+    file.write("Metodo de Euler Inverso\n")
+    print("Metodo de Euler Inverso")
+    file.write("y( " + str(axis_x[0]) + " ) = " + str(axis_y[0]) + "\n")
+    file.write("h = " + str(h) + "\n")
+    print(0, axis_y[0])
+    for j in range(1, n+1):
+        file.write(str(j) + " " + str(axis_y[j]) + "\n")
+        print(j, axis_y[j])
+    file.write("\n")
+    print("\n")
     ShowGraphic(axis_x, axis_y, "Adam-Bashforth de ordem: " + str(order))
 
 # Executa o main do programa
