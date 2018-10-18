@@ -28,6 +28,8 @@ def main():
             ys = []
             for i in range(1, order+1):
                 ys.append(float(words[i]))
+            for bia in ys:
+                print(bia)
             AdamBashforth(ys, float(words[order+1]), float(words[order+2]), int(words[order+3]), sympify(words[order+4]), order, file)
         elif words[0] == 'adam_bashforth_by_euler':
             order = int(words[-1])
@@ -93,6 +95,42 @@ def main():
             t0 = float(words[2]) + float(words[3])*(order - 2)
             list_y = rungekutta(float(words[1]), float(words[2]), float(words[3]), (order - 2), sympify(words[5]), 0, file)
             AdamMoulton(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order, file)
+        elif words[0] == 'formula_inversa':
+            order = int(words[-1])
+            file.write("Metodo de Formula Inversa de Diferenciacao ( ordem = " + str(order) + " )\n")
+            print("Metodo de Formula Inversa de Diferenciacao ( ordem = " + str(order) + " )")
+            ys = []
+            for i in range(1, order):
+                ys.append(float(words[i]))
+            fdi(ys, float(words[order]), float(words[order+1]), int(words[order+2]), sympify(words[order+3]), order, file)
+        elif words[0] == 'formula_inversa_by_euler':
+            order = int(words[-1])
+            file.write("Metodo de Formula Inversa de Difereneciacao por Euler ( ordem = " + str(order) + " )\n")
+            print("Metodo de Formula Inversa de Diferenciacao por Euler ( ordem = " + str(order) + " )")
+            t0 = float(words[2]) + float(words[3])*(order - 2)
+            list_y = Euler(float(words[1]), float(words[2]), float(words[3]), (order - 2), sympify(words[5]), 0, file)
+            fdi(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order, file)
+        elif words[0] == 'formula_inversa_by_euler_inverso':
+            order = int(words[-1])
+            file.write("Metodo de Formula Inversa de Difereneciacao por Euler Inverso ( ordem = " + str(order) + " )\n")
+            print("Metodo de Formula Inversa de Diferenciacao por Euler Inverso ( ordem = " + str(order) + " )")
+            t0 = float(words[2]) + float(words[3])*(order - 2)
+            list_y = EulerInverso(float(words[1]), float(words[2]), float(words[3]), (order - 2), sympify(words[5]), 0, file)
+            fdi(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order, file)
+        elif words[0] == 'formula_inversa_by_euler_aprimorado':
+            order = int(words[-1])
+            file.write("Metodo de Formula Inversa de Difereneciacao por Euler Aprimorado ( ordem = " + str(order) + " )\n")
+            print("Metodo de Formula Inversa de Diferenciacao por Euler Aprimorado ( ordem = " + str(order) + " )")
+            t0 = float(words[2]) + float(words[3])*(order - 2)
+            list_y = EulerAprimorado(float(words[1]), float(words[2]), float(words[3]), (order - 2), sympify(words[5]), 0, file)
+            fdi(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order, file)
+        elif words[0] == 'formula_inversa_by_runge_kutta':
+            order = int(words[-1])
+            file.write("Metodo de Formula Inversa de Difereneciacao por Runge-Kutta ( ordem = " + str(order) + " )\n")
+            print("Metodo de Formula Inversa de Diferenciacao por Runge-Kutta ( ordem = " + str(order) + " )")
+            t0 = float(words[2]) + float(words[3])*(order - 2)
+            list_y = rungekutta(float(words[1]), float(words[2]), float(words[3]), (order - 2), sympify(words[5]), 0, file)
+            fdi(list_y, t0, float(words[3]), int(words[4]), sympify(words[5]), order, file)
     read.close()
     file.close()
 
@@ -171,6 +209,11 @@ def EulerAprimorado(y0, t0, h, n, expr, show, file):
         axis_x.append(tn)
         if i != n:
             #Yn+1 = Yn + (Fn + Fn+1)*h/2
+            # Sem Previsao
+            #previsao = yn + h * expr.subs( [ (t, tn), (y, axis_y[i]) ] )
+            #Yn1 = yn + (h/2) * (expr.subs( [ (t, tn1), (y, previsao) ] ) + expr.subs( [ (t, tn), (y, axis_y[i]) ] ))
+            #axis_y.append(Yn1)
+            # Com Previsao
             Yn1 = solve(axis_y[i] + (h/2)*(expr.subs(t, tn1) + expr.subs([(y, axis_y[i]), (t, tn)])) - y, implicit=True)
             axis_y.append(Yn1[0])
     if show == 1:
@@ -583,6 +626,118 @@ def AdamMoulton(input_y, t0, h, n, expr, order, file):
     file.write("\n")
     print("\n")
     ShowGraphic(axis_x, axis_y, "Adam-Moulton de ordem: " + str(order))
+
+def fdi(input_y, t0, h, n, expr, order, file):
+    # Initializing lists
+    axis_y = []
+    axis_x = []
+    # Storing the first values
+    aux = order - 2
+    for item in input_y:
+        axis_y.append(item)
+        t_aux = t0 - h*aux
+        axis_x.append(t_aux)
+        aux = aux - 1
+
+    # Calculating Yn+1
+    if order == 2:
+        for i in range(n):
+            tn  = axis_x[i]
+            tn1 = tn + h
+            yn  = axis_y[i]
+            # Defining Fn+1:
+            Fn1 = h * expr.subs(t, tn1)
+            # Finding Yn+1 by FDI:
+            Yn1 = solve(yn + (Fn1) - y, Implicit=True)
+            # Saving values into the arrays
+            axis_y.append(Yn1[0])
+            axis_x.append(tn1)
+    elif order == 3:
+        for i in range(1, n):
+            tn   = axis_x[i]
+            tn1  = tn + h
+            yn   = (4/3) * axis_y[i]
+            yn_1 = (1/3) * axis_y[i-1]
+            # Defining Fn+1:
+            Fn1  = h * (2/3) * expr.subs(t, tn1)
+            # Finding Yn+1 by FDI:
+            Yn1 = solve(Fn1 + yn - yn_1 - y, Implicit=True)
+            # Saving values into the arrays
+            axis_y.append(Yn1[0])
+            axis_x.append(tn1)
+    elif order == 4:
+        for i in range(2, n):
+            tn   = axis_x[i]
+            tn1  = tn + h
+            yn   = (18/11) * axis_y[i]
+            yn_1 = (9/11)  * axis_y[i-1]
+            yn_2 = (2/11)  * axis_y[i-2]
+            # Defining Fn+1:
+            Fn1  = h * (6/11) * expr.subs(t, tn1)
+            # Finding Yn+1 by FDI:
+            Yn1 = solve(Fn1 + yn - yn_1 + yn_2 - y, Implicit=True)
+            # Saving values into the arrays
+            axis_y.append(Yn1[0])
+            axis_x.append(tn1)
+    elif order == 5:
+        for i in range(3, n):
+            tn   = axis_x[i]
+            tn1  = tn + h
+            yn   = (48/25) * axis_y[i]
+            yn_1 = (36/25) * axis_y[i-1]
+            yn_2 = (16/25) * axis_y[i-2]
+            yn_3 = (3/25)  * axis_y[i-3]
+            # Defining Fn+1:
+            Fn1  = h * (12/25) * expr.subs(t, tn1)
+            # Finding Yn+1 by FDI:
+            Yn1 = solve(Fn1 + yn - yn_1 + yn_2 - yn_3 - y, Implicit=True)
+            # Saving values into the arrays
+            axis_y.append(Yn1[0])
+            axis_x.append(tn1)
+    elif order == 6:
+        for i in range(4, n):
+            tn   = axis_x[i]
+            tn1  = tn + h
+            yn   = (300/137) * axis_y[i]
+            yn_1 = (300/137) * axis_y[i-1]
+            yn_2 = (200/137) * axis_y[i-2]
+            yn_3 = (75/137)  * axis_y[i-3]
+            yn_4 = (12/137)  * axis_y[i-4]
+            # Defining Fn+1:
+            Fn1  = h * (60/137) * expr.subs(t, tn1)
+            # Finding Yn+1 by FDI:
+            Yn1 = solve(Fn1 + yn - yn_1 + yn_2 - yn_3 + yn_4 - y, Implicit=True)
+            # Saving values into the arrays
+            axis_y.append(Yn1[0])
+            axis_x.append(tn1)
+    elif order == 7:
+        for i in range(5, n):
+            tn   = axis_x[i]
+            tn1  = tn + h
+            yn   = (360/147) * axis_y[i]
+            yn_1 = (450/147) * axis_y[i-1]
+            yn_2 = (400/147) * axis_y[i-2]
+            yn_3 = (225/147) * axis_y[i-3]
+            yn_4 = (72/147)  * axis_y[i-4]
+            yn_5 = (10/147)  * axis_y[i-5]
+            # Defining Fn+1:
+            Fn1  = h * (60/147) * expr.subs(t, tn1)
+            # Finding Yn+1 by FDI:
+            Yn1 = solve(Fn1 + yn - yn_1 + yn_2 - yn_3 + yn_4 - y, Implicit=True)
+            # Saving values into the arrays
+            axis_y.append(Yn1[0])
+            axis_x.append(tn1)
+
+    # Priting Values
+    file.write("y( " + str(axis_x[0]) + " ) = " + str(axis_y[0]) + "\n")
+    file.write("h = " + str(h) + "\n")
+    print(0, axis_y[0])
+    for j in range(1, n+1):
+        file.write(str(j) + " " + str(axis_y[j]) + "\n")
+        print(j, axis_y[j])
+    file.write("\n")
+    print("\n")
+    ShowGraphic(axis_x, axis_y, "Formula Inversa de Diferenciacao de Ordem: " + str(order))
 
 # Executa o main do programa
 if __name__ == "__main__":
